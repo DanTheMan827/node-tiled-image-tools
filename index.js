@@ -157,4 +157,4 @@ exports.convertFromTiled = function (data) {
   })
 }
 
-module.export = exports
+module.exports = exports
