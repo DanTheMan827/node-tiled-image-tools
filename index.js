@@ -42,10 +42,21 @@ exports.convertToTiled = function (data) {
         data['bgr'] = true
         break
 
+      case 'a8':
+        data['565'] = false
+        data['bgr'] = false
+        break
+
       default: reject('Unsupported type: ' + data.type)
     }
     var i = 0
-    var bufferSize = (data['width'] * data['height']) * (data['565'] ? 2 : 3)
+    var bufferSize = (data['width'] * data['height'])
+    if (data['565']) {
+      bufferSize = bufferSize * 2
+    } else if (data['type'] !== 'a8') {
+      bufferSize = bufferSize * 3
+    }
+
     var tiledData = Buffer.alloc(bufferSize)
     for (var tileY = 0; tileY < data['height']; tileY += 8) {
       for (var tileX = 0; tileX < data['width']; tileX += 8) {
@@ -67,6 +78,8 @@ exports.convertToTiled = function (data) {
 
             tiledData[i++] = (colorData & 0x00ff)
             tiledData[i++] = (colorData & 0xff00) >> 8
+          } else if (data['type'] === 'a8') {
+            tiledData[i++] = Math.round((r + g + b) / 3)
           } else {
             tiledData[i++] = (data['bgr'] ? b : r)
             tiledData[i++] = g
@@ -110,6 +123,11 @@ exports.convertFromTiled = function (data) {
         data['bgr'] = true
         break
 
+      case 'a8':
+        data['565'] = false
+        data['bgr'] = false
+        break
+
       default: reject('Unsupported type: ' + data.type)
     }
 
@@ -131,6 +149,10 @@ exports.convertFromTiled = function (data) {
             r = ((color >> 11) & 0x1f) << 3
             g = ((color >> 5) & 0x3f) << 2
             b = (color & 0x1f) << 3
+          } else if (data['type'] === 'a8') {
+            r = data['data'][i++]
+            g = r
+            b = g
           } else {
             r = data['data'][i++]
             g = data['data'][i++]

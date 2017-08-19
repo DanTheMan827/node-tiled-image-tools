@@ -9,7 +9,7 @@ This is a promise-based library for encoding and decoding tiled images.
 |**Height**    |The image height, if encoding, you can specify a smaller height to crop to|
 |**cropWidth** |**Used when decoding**<br />The width to crop the output image to.
 |**cropHeight**|**Used when decoding**<br /> The height to crop the output image to.
-|**type**      |The encoding type, allowed values are:<br><br>rgb888<br>rgb565<br>bgr888<br>bgr565|
+|**type**      |The encoding type, allowed values are:<br><br>a8<br>rgb888<br>rgb565<br>bgr888<br>bgr565|
 
 ## Encoding
 This example will read a PNG using the pngjs library and encode the image data.
@@ -33,8 +33,7 @@ fs.createReadStream('./MyImage.png')
         data: A buffer with the encoded data
         width: The encoded image width
         height: The encoded image height
-        bgr: If the image is BGR encoded
-        565: If the image is 565 encoded
+        type: The encoding type
       */
     }
   })
@@ -59,8 +58,7 @@ fs.readFile('./RGB565Image.bin', function (data) {
       data: A buffer with the decoded RGBA values
       width: The image width
       height: The image height
-      
-      It will also contain the options used to decode the image.
+      type: the encoding type used to decode the image.
     */
   })
 }
